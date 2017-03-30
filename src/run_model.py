@@ -9,7 +9,7 @@ class InputConfig(object):
 class ModelConfig(object):
   hidden_size = 256
   batch_size = 100
-  learning_rate = 1e-4
+  learning_rate = 1e-3
   num_epoch = 1000
   keep_prob = 0.5
 
@@ -32,7 +32,7 @@ class RNNClassification(object):
     # Embedding layer
     embeddings = tf.get_variable('embedding_matrix', [vocab_size, size])
     rnn_inputs = tf.nn.embedding_lookup(embeddings, self.x) # [batch_size, ?, size]
-    rnn_inputs = tf.nn.dropout(rnn_inputs, keep_prob)
+    # rnn_inputs = tf.nn.dropout(rnn_inputs, keep_prob)
     # RNN
     cell = tf.contrib.rnn.GRUCell(size)
     init_state = tf.get_variable('init_state', [1, size],
@@ -40,9 +40,9 @@ class RNNClassification(object):
     init_state = tf.tile(init_state, [self.batch_size, 1])
     rnn_outputs, final_state = tf.nn.dynamic_rnn(cell, rnn_inputs, sequence_length=self.seqlen,
                                                  initial_state=init_state) # [batch_size, size]
-    rnn_outputs = tf.nn.dropout(rnn_outputs, keep_prob)
+    # rnn_outputs = tf.nn.dropout(rnn_outputs, keep_prob)
 
-    idx = tf.range(self.batch_size)*tf.shape(rnn_outputs)[1] + (self.seqlen - 1) # very important
+    idx = tf.range(self.batch_size) * tf.shape(rnn_outputs)[1] + (self.seqlen - 1) # very important
     last_rnn_output = tf.gather(tf.reshape(rnn_outputs, [-1, size]), idx) # [batch_size, size]
 
     # Softmax layer
