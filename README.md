@@ -1,2 +1,3 @@
-# TextClassifier
-Text Classifier
+# Experiments
+20Newsgroup
+SVM: 0.953
