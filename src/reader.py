@@ -68,6 +68,17 @@ def ptb_raw_data(data_path=None):
     vocabulary = len(word_to_id)
     return train_data, valid_data, vocabulary, word_to_id, label_to_id
 
+
+def ptb_raw_test_data(data_path=None):
+    train_path = os.path.join(data_path, "train.txt")
+    test_path = os.path.join(data_path, "test.txt")
+
+    word_to_id = _build_vocab(train_path)
+    label_to_id = _build_category(train_path)
+
+    test_data = _file_to_cases(test_path, word_to_id, label_to_id)
+    return test_data
+
 class DataProducer(object):
 
     def __init__(self, data):
