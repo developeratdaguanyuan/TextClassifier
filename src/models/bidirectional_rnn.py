@@ -6,10 +6,11 @@ class InputConfig(object):
     self.class_size = _class_size
 
 class ModelConfig(object):
-  hidden_size = 256
-  batch_size = 100
-  learning_rate = 1e-3
-  num_epoch = 1000
+  def __init__(self, _hidden_size, _batch_size, _learning_rate, _num_epoch):
+    self.hidden_size = _hidden_size
+    self.batch_size = _batch_size
+    self.learning_rate = _learning_rate
+    self.num_epoch = _num_epoch
 
 class RNNClassification(object):
   def __init__(self, model_config, input_config):
@@ -30,16 +31,13 @@ class RNNClassification(object):
     embeddings = tf.get_variable('embedding_matrix', [vocab_size, size])
     rnn_inputs = tf.nn.embedding_lookup(embeddings, self.x) # [batch_size, ?, size]
     # RNN
-    init_state_fw = tf.get_variable('init_state_fw', [1, size],
-                                    initializer=tf.constant_initializer(0.0))
+    init_state_fw = tf.get_variable('init_state_fw', [1, size], initializer=tf.constant_initializer(0.0))
     init_state_fw = tf.tile(init_state_fw, [self.batch_size, 1])
-    init_state_bw = tf.get_variable('init_state_bw', [1, size],
-                                    initializer=tf.constant_initializer(0.0))
+    init_state_bw = tf.get_variable('init_state_bw', [1, size], initializer=tf.constant_initializer(0.0))
     init_state_bw = tf.tile(init_state_bw, [self.batch_size, 1])
 
     cell_fw = tf.contrib.rnn.GRUCell(size)
     cell_bw = tf.contrib.rnn.GRUCell(size)
-    #(rnn_outputs_fw, rnn_outputs_bw), final_state \
     rnn_outputs, final_state \
       = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, rnn_inputs, self.seqlen, init_state_fw, init_state_bw)
     rnn_outputs_fw, rnn_outputs_bw = rnn_outputs
