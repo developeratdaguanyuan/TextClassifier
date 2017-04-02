@@ -9,11 +9,11 @@ def main(_):
     train_data_producer = reader.DataProducer(train_data)
     valid_data_producer = reader.DataProducer(valid_data)
 
-    model_config = birnn.ModelConfig(256, 100, 1e-3, 1000)
-    input_config = birnn.InputConfig(vocabulary, len(label_to_id))
-    graph = birnn.RNNClassification(model_config, input_config)
+    print("vocabulary: " + str(vocabulary))
+    model_config = birnn.ModelConfig(256, 100, 1e-3, vocabulary, len(label_to_id), 0.5)
+    graph = birnn.RNNClassification(model_config, True)
 
-    graph.train(train_data_producer, valid_data_producer)
+    graph.train(train_data_producer, valid_data_producer, 1000)
 
 
 if __name__ == "__main__":
