@@ -2,13 +2,13 @@ import tensorflow as tf
 
 
 class ModelConfig(object):
-  def __init__(self, hidden_size, batch_size, learning_rate, vocab_size, class_size, keep_prob):
+  def __init__(self, hidden_size, batch_size, learning_rate, vocab_size, class_size):
     self.hidden_size = hidden_size
     self.batch_size = batch_size
     self.learning_rate = learning_rate
     self.vocab_size = vocab_size
     self.class_size = class_size
-    self.keep_prob = keep_prob
+    #self.keep_prob = keep_prob
 
 class RNNClassification(object):
   def __init__(self, model_config, is_training):
@@ -18,7 +18,7 @@ class RNNClassification(object):
     learning_rate = model_config.learning_rate
     vocab_size = model_config.vocab_size
     num_classes = model_config.class_size
-    keep_prob = model_config.keep_prob
+    #keep_prob = model_config.keep_prob
 
     # Placeholders
     self.x = tf.placeholder(tf.int32, [self.batch_size, None]) # [batch_size, ?]
@@ -28,8 +28,10 @@ class RNNClassification(object):
     # Embedding layer
     embeddings = tf.get_variable('embedding_matrix', [vocab_size, size])
     rnn_inputs = tf.nn.embedding_lookup(embeddings, self.x) # [batch_size, ?, size]
+    """
     if is_training and keep_prob < 1:
       rnn_inputs = tf.nn.dropout(rnn_inputs, keep_prob)
+    """
 
     # RNN
     init_state_fw = tf.get_variable('init_state_fw', [1, size], initializer=tf.constant_initializer(0.0))
@@ -42,8 +44,11 @@ class RNNClassification(object):
     rnn_outputs, final_state \
       = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, rnn_inputs, self.seqlen, init_state_fw, init_state_bw)
     rnn_outputs_fw, rnn_outputs_bw = rnn_outputs
-    #rnn_outputs_fw = tf.nn.dropout(rnn_outputs_fw, keep_prob)
-    #rnn_outputs_bw = tf.nn.dropout(rnn_outputs_bw, keep_prob)
+    """
+    if is_training and keep_prob < 1:
+      rnn_outputs_fw = tf.nn.dropout(rnn_outputs_fw, keep_prob)
+      rnn_outputs_bw = tf.nn.dropout(rnn_outputs_bw, keep_prob)
+    """
     last_output_fw = tf.transpose(rnn_outputs_fw, perm=[1, 0, 2])[-1]
     last_output_bw = tf.transpose(rnn_outputs_bw, perm=[1, 0, 2])[-1]
     last_output = tf.concat([last_output_fw, last_output_bw], 1)
@@ -85,5 +90,5 @@ class RNNClassification(object):
           train_accuracy = 0
           if valid_accuracy >= max_valid_accuracy:
             max_valid_accuracy = valid_accuracy
-            save_path = self.saver.save(sess, "/tmp/bidirectional_rnn_" + str(i))
+            save_path = self.saver.save(sess, "/tmp/bidirectional_rnn/bidirectional_rnn_" + str(i))
             print("Model saved in file: %s" % save_path)

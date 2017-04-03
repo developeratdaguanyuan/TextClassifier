@@ -10,7 +10,7 @@ def main(_):
     valid_data_producer = reader.DataProducer(valid_data)
 
     print("vocabulary: " + str(vocabulary))
-    model_config = birnn.ModelConfig(256, 100, 1e-3, vocabulary, len(label_to_id), 0.5)
+    model_config = birnn.ModelConfig(256, 100, 1e-3, vocabulary, len(label_to_id))
     graph = birnn.RNNClassification(model_config, True)
 
     graph.train(train_data_producer, valid_data_producer, 1000)

@@ -6,13 +6,13 @@ def main(_):
     test_data = reader.ptb_raw_test_data("/home/dzhou/tfprojects/TextClassifier/data/20Newsgroups/")
     test_data_producer = reader.DataProducer(test_data)
 
-    model_config = birnn.ModelConfig(256, 1, 1e-3, 8328, 4, 0.5)
+    model_config = birnn.ModelConfig(256, 1, 1e-3, 8328, 4)
     graph = birnn.RNNClassification(model_config, False)
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
-        saver.restore(sess, "/tmp/bidirectional_rnn_2886")
+        saver.restore(sess, "/tmp/bidirectional_rnn/bidirectional_rnn_1998")
         accuracy = 0
         for i in range(test_data_producer.size):
             data, label, seqlen = test_data_producer.next_batch(1)
