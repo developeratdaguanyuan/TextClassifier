@@ -1,6 +1,7 @@
 import reader
 import tensorflow as tf
 from models import bidirectional_rnn as birnn
+from models import rnn as rnn
 
 def main(_):
     # train_data, valid_data, vocabulary, word_to_id, label_to_id = reader.ptb_raw_data("DSL-Task-master/data/DSLCC-v2.0/train-dev/")
@@ -11,9 +12,9 @@ def main(_):
 
     print("vocabulary: " + str(vocabulary))
     model_config = birnn.ModelConfig(256, 100, 1e-3, vocabulary, len(label_to_id))
-    graph = birnn.RNNClassification(model_config, True)
-
-    graph.train(train_data_producer, valid_data_producer, 1000)
+    #graph = birnn.BidirectionalRNNClassifier(model_config, True)
+    graph = rnn.RNNClassifier(model_config, True)
+    graph.train(train_data_producer, valid_data_producer, 100)
 
 
 if __name__ == "__main__":
