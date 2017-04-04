@@ -10,7 +10,7 @@ class ModelConfig(object):
     self.class_size = class_size
     #self.keep_prob = keep_prob
 
-class RNNClassification(object):
+class BidirectionalRNNClassifier(object):
   def __init__(self, model_config, is_training):
     self.batch_size = model_config.batch_size
 
@@ -78,7 +78,7 @@ class RNNClassification(object):
 
         if i > 0 and i % (train_data_producer.size / self.batch_size) == 0:
           valid_accuracy = 0
-          valid_iteration = valid_data_producer.size/self.batch_size
+          valid_iteration = valid_data_producer.size / self.batch_size
           for j in range(valid_iteration):
             valid_data, valid_label, valid_seqlen = valid_data_producer.next_batch(self.batch_size)
             valid_feed = {self.x: valid_data, self.y: valid_label, self.seqlen: valid_seqlen}
